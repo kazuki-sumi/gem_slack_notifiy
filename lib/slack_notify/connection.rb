@@ -16,7 +16,9 @@ module SlackNotify
     end
 
     def handle_response(response)
-      response.body.include?("\n") ? raise SlackNotify::Error : raise SlackNotify::Error.new(response.body) unless response.success?
+      unless response.success?
+        response.body.include?("\n") ? raise SlackNotify::Error : raise SlackNotify::Error.new(response.body)
+      end
     end
   end
 end
