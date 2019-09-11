@@ -3,7 +3,7 @@ require "faraday"
 
 module SlackNotify
   class Client
-    include SlackNotify::Connectionss
+    include SlackNotify::Connection
 
     def initialize(options = {})
       raise ArgumentError, "webhook URL required" unless options[:webhook_url]
