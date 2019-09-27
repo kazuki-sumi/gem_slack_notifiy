@@ -2,6 +2,7 @@ require "json"
 require "faraday"
 require "net/http"
 require "uri"
+require "pry-byebug"
 
 module SlackNotify
   class Client
@@ -25,7 +26,7 @@ module SlackNotify
 
     def notify(text, channel = nil)
       delivery_channels(channel).each do |chan|
-        payload = SlackNotify::Payload.new(
+        payload = {
           text: text,
           channel: chan,
           username: @username,
@@ -33,16 +34,14 @@ module SlackNotify
           icon_emoji: @icon_emoji,
           link_names: @link_names,
           unfurl_links: @unfurl_links
-        )
+        }
         uri = URI.parse(@webhook_url)
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
         req = Net::HTTP::Post.new(uri.request_uri)
         req["Content-Type"] = "application/json"
         req.body = payload.to_json
-        res = http.request(req)
-        puts "OK"
-        # send_payload(payload)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.request(req)
       end
 
       true
